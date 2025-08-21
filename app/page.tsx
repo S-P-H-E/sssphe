@@ -44,13 +44,13 @@ export default function Home() {
   
   return (
     <div className="h-[100dvh] relative flex flex-col items-center justify-center gap-6 p-6 motion-opacity-in-0 motion-preset-expand motion-blur-in-lg motion-duration-1500">
-      <div>
+      <div className="w-full md:w-[500px]">
         <div className="flex w-[160px] ml-auto mr-2 md:mr-3 mb-5 justify-end items-center md:gap-2 rotate-[2deg]">
             <h1 className={`${caveat.className} antialiased font-bold text-2xl`}>Press to {mute ? "unmute" : "mute"}</h1>
             <PiArrowBendDownLeftBold size={20} className="-rotate-90 translate-y-3"/>
         </div>
 
-        <div className="relative w-full md:w-[500px] h-[300px]">
+        <div className="relative w-full h-[300px]">
           <div className="absolute z-10 w-full flex justify-between p-3">
             <button onClick={handleIndex} className="cursor-pointer text-xl drop-shadow-lg">
               <BsStars />
