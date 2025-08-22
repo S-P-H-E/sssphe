@@ -6,6 +6,7 @@ import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import { PiArrowBendDownLeftBold } from "react-icons/pi";
 import { Caveat } from "next/font/google"
 import { BsStars } from "react-icons/bs";
+import { clsx } from 'clsx'
 
 const caveat = Caveat({
   variable: "--font-caveat",
@@ -15,6 +16,7 @@ const caveat = Caveat({
 export default function Home() {
   const [mute, setMute] = useState(true)
   const [index, setIndex] = useState<number | null>(null);
+  const [exclude, setExclude] = useState<number[]>([])
   
   const videos = [
     "https://res.cloudinary.com/dxpzs2g3f/video/upload/v1755801440/RDownload_ngrach.mov",
@@ -35,9 +37,31 @@ export default function Home() {
     "https://res.cloudinary.com/dxpzs2g3f/video/upload/v1755806582/bibleftbl_-_1755804467769_omdux1.mp4"
   ]
 
-  const handleIndex = () => {
-    setIndex(Math.floor(Math.random() * videos.length))
+  // * code modified from stackoverflow "https://arc.net/l/quote/rlpsihay"
+  const generateRandom = () => {
+    let random: number | undefined;
+    while (!random) {
+      const x = Math.floor(Math.random() * ((videos.length - 1) - 0 + 1)) + 0;
+      if (exclude.indexOf(x) === - 1) random = x;
+    }
+
+    setIndex(random)
+    setExclude(prev => [...prev, random]);
+    console.log("Playing video #", random)
+    console.log("Excluded: ", exclude)
   }
+  // *
+
+  const handleIndex = () => {
+    if (videos.length == exclude.length + 2) {
+      // Empty the array
+      setExclude([])
+      generateRandom()
+    } else {
+      generateRandom()
+    }
+  }
+
   useEffect(() => {
     handleIndex()
   }, []);
@@ -50,7 +74,7 @@ export default function Home() {
             <PiArrowBendDownLeftBold size={20} className="-rotate-90 translate-y-3"/>
         </div>
 
-        <div className="relative w-full h-[300px]">
+        <div className="relative w-full h-[400px]">
           <div className="absolute z-10 w-full flex justify-between p-3">
             <button onClick={handleIndex} className="cursor-pointer text-xl drop-shadow-lg">
               <BsStars />
@@ -63,7 +87,7 @@ export default function Home() {
               )}
             </button>
           </div>
-          <div className="bg-gradient-to-t from-[var(--background)] to-transparent absolute w-full h-1/2 bottom-0 z-10"/>
+          <div className={clsx(!mute && "opacity-0", "transition-opacity duration-300 bg-gradient-to-t from-[var(--background)] to-transparent absolute w-full h-1/2 bottom-0 z-10")}/>
           {index !== null && (
             <video muted={mute} autoPlay loop playsInline preload="auto" disablePictureInPicture src={videos[index]} className="w-full h-full object-cover grayscale-50 rounded-2xl"/>
           )}
